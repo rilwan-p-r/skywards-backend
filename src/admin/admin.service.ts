@@ -18,7 +18,9 @@ export class AdminService {
 
             const payload = { adminEmail};
 
-            const token = this.jwtService.sign(payload)
+            const token = this.jwtService.sign(payload,{ secret: process.env.SECRET_KEY })
+            console.log('generated tokennn',token);
+            
 
             res.cookie('adminJwt', token, {
                 httpOnly: true,

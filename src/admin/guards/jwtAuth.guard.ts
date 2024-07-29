@@ -6,30 +6,38 @@ import * as jwt from 'jsonwebtoken';
 export class JwtGuard extends AuthGuard('adminJwt') {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const token = request.cookies.adminJwt;
-   
-    // console.log('token:', token);
+    const token = request.cookies ? request.cookies.adminJwt : null;
+    console.log('requestttt',request);
+    console.log('tokennnn',token);
     
+    
+
     if (!token) {
-      return false;
+      throw new UnauthorizedException('No token found');
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.SECRET_KEY) as { adminEmail: string };;
-      console.log('decoded:',decoded);
-      
+        const secretKey = process.env.SECRET_KEY;
+        const decoded = jwt.verify(token, secretKey) as { adminEmail: string };
+        console.log('decodeddd', decoded);
+        
+
       const adminEmail = process.env.ADMIN_EMAIL;
 
-
-      if(decoded.adminEmail !== adminEmail){
-        throw new UnauthorizedException('Incorrect Payload');
+      if (decoded.adminEmail !== adminEmail) {
+        throw new UnauthorizedException('Incorrect payload');
       }
 
       request.adminEmail = adminEmail;
-
       return true;
     } catch (error) {
-      throw new Error(error.message);
+      if (error instanceof jwt.JsonWebTokenError) {
+        throw new UnauthorizedException('Invalid : ',error.message);
+      } else if (error instanceof jwt.TokenExpiredError) {
+        throw new UnauthorizedException('Token expired');
+      } else {
+        throw new UnauthorizedException(error.message);
+      }
     }
   }
 }
