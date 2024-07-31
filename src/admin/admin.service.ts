@@ -39,4 +39,15 @@ export class AdminService {
         }
     }
 
+    async adminLogout(res: Response) {
+        res.cookie('adminJwt', '', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'strict',
+            expires: new Date(0),
+        });
+
+        return { message: 'Logged out successfully' };
+    }
+
 }

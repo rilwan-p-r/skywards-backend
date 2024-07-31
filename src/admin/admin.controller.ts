@@ -7,7 +7,6 @@ import { Response } from 'express';
 @Controller('admin')
 export class AdminController {
     constructor(private readonly adminService:AdminService){}
-
     @Post('login')
     async adminLogin(
         @Body() input: { email: string; password: string },
@@ -18,6 +17,11 @@ export class AdminController {
         return this.adminService.adminlogin(input, res);
     }
     
-    // @UseGuards(JwtGuard)
+    @Post('logout')
+    async adminLogout(@Res({ passthrough: true }) res: Response) {
+        return this.adminService.adminLogout(res);
+    }
+    
+        // @UseGuards(JwtGuard)
 
 }
