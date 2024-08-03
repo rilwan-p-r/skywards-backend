@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { Logger, Module } from '@nestjs/common';
 import { AdminModule } from './admin/admin.module';
-import { ConfigModule } from '@nestjs/config';
-// import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TeacherController } from './teacher/teacher.controller';
+import { TeacherService } from './teacher/teacher.service';
+import { TeacherModule } from './teacher/teacher.module';
+
+
 
 @Module({
   imports: [
@@ -12,15 +15,19 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath:'.env',
       isGlobal: true
     }),
-    // MongooseModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: async (config) => ({
-    //     uri:`${process.env.DB_URI}`,
-    //   }),
-    // }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (ConfigService: ConfigService) => {
+        const uri = ConfigService.get<string>('MONGO_URI');
+        Logger.log(`MongoDB connected to ${uri}`, 'MongooseModule');
+        return { uri };
+      },
+      inject: [ConfigService],
+    }),
     AdminModule,
+    TeacherModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [TeacherController],
+  providers: [TeacherService],
 })
 export class AppModule { }

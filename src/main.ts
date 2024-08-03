@@ -2,7 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
-
+import { config } from 'dotenv';
+config();
 async function bootstrap() {
   console.log('Environment Variables:', process.env);
 
@@ -10,9 +11,9 @@ async function bootstrap() {
   const port = process.env.PORT
   console.log(`Running port number: ${port}`);
   app.use(cookieParser());
-  app.use(morgan('tiny'));
+  app.use(morgan('dev'));
   app.enableCors({
-    origin: 'http://localhost:5173', // replace with your frontend URL
+    origin: 'http://localhost:5173',
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
