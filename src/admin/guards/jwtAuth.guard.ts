@@ -9,8 +9,6 @@ export class JwtGuard extends AuthGuard('adminJwt') {
     const token = request.cookies ? request.cookies.adminJwt : null;
     console.log('requestttt',request);
     console.log('tokennnn',token);
-    
-    
 
     if (!token) {
       throw new UnauthorizedException('No token found');

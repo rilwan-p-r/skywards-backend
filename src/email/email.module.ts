@@ -11,8 +11,8 @@ import { EmailService } from './email.service';
         port:465,
         secure:true,
         auth: {
-          user: `skywards121@gmail.com`,
-          pass: `bjnh wwqe cash qtxn`,
+          user: `skywards154@gmail.com`,
+          pass: `gbvp lbek lzis peik`,
         },
         tls: {
           rejectUnauthorized: false,

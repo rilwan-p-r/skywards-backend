@@ -39,4 +39,14 @@ export class TeachersAdminService {
         return createdTeacher;
     }
 
+    async getTeachersList() {
+        try {
+            const teachers = await this.teacherRepository.findTeachers();
+            console.log(teachers);
+            return teachers;
+        } catch (error) {
+            throw new Error(`Failed to fetch teachers: ${error.message}`);
+        }
+    }
+
 }

@@ -7,5 +7,5 @@ export interface TeacherInterface {
     yearsOfExperience: number;
     imageUrl: string;
     verified: boolean;
-    password: string
+    password: string;
 }

@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Teacher } from "../schema/addTeacher.schema";
+import { Teacher } from "../schema/teacher.schema";
 import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
 import { TeacherInterface } from "../interfaces/teacher.interface";
@@ -15,6 +15,10 @@ export class TeacherRepository {
 
     async findByEmail(email:string){
         return await this.teacherModel.findOne({email});
+    }
+
+    async findTeachers(){
+        return await this.teacherModel.find()
     }
 
 }
