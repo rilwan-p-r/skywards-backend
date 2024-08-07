@@ -48,7 +48,7 @@ export class Student extends Document {
 
 export const StudentSchema = SchemaFactory.createForClass(Student);
 
-// Add a pre-save hook to hash the password
+// hash the password
 StudentSchema.pre('save', async function(next) {
     if (!this.isModified('password')) {
         return next();
@@ -58,8 +58,3 @@ StudentSchema.pre('save', async function(next) {
     this.password = await bcrypt.hash(this.password, saltRounds);
     next();
 });
-
-// Add a method to verify password
-StudentSchema.methods.verifyPassword = async function(candidatePassword: string): Promise<boolean> {
-    return bcrypt.compare(candidatePassword, this.password);
-};

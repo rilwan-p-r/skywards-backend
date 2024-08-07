@@ -1,20 +1,20 @@
 import { ConflictException, Injectable,} from '@nestjs/common';
 import { StudentDto } from '../dto/Student.dto';
 import { StudentInterface } from '../interfaces/student.interface';
-import { StudentRepository } from '../repositories/student.repository';
+import { StudentAdminRepository } from '../repositories/studentAdmin.repository';
 import { generatePassword } from '../../utils/generatePassword';
 import { EmailService } from '../../email/email.service';
 
 @Injectable()
 export class StudentAdminService {
     constructor(
-        private readonly studentRepository: StudentRepository,
+        private readonly studentAdminRepository: StudentAdminRepository,
         private readonly emailService:EmailService
     ) { }
 
     async addStudent(studentDto: StudentDto, file: Express.Multer.File): Promise<StudentInterface> {
         const imageUrl = (file as any).location;
-        const existingStudent = await this.studentRepository.findByEmail(studentDto.email);
+        const existingStudent = await this.studentAdminRepository.findByEmail(studentDto.email);
     
         if (existingStudent) {
             throw new ConflictException('Student with this email already exists');
@@ -33,9 +33,19 @@ export class StudentAdminService {
         
         await this.emailService.sendStudentCredentials(studentDto.email, randomPassword);
 
-        const createdStudent = await this.studentRepository.createStudent(newStudent);
+        const createdStudent = await this.studentAdminRepository.createStudent(newStudent);
         console.log('created....',createdStudent);
         
         return createdStudent;
+    }
+
+    async getStudents(){
+        try {
+            const students = await this.studentAdminRepository.findStudents();
+            console.log(students);
+            return students;
+        } catch (error) {
+            throw new Error(`Failed to fetch students: ${error.message}`);
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, UploadedFile, UseGuards, UseInterceptors, } from '@nestjs/common';
 import { TeachersAdminService } from '../services/teachersAdmin.services';
-import { JwtGuard } from '../guards/jwtAuth.guard';
+import { JwtAdminGuard } from 'src/guards/jwtAdminAuth.guard';
 import { TeacherDto } from '../dto/Teacher.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -10,7 +10,7 @@ export class TeachersAdminController {
         private readonly teachersAdminService: TeachersAdminService,
     ) { }
 
-    @UseGuards(JwtGuard)
+    @UseGuards(JwtAdminGuard)
     @Post('addteacher')
     @UseInterceptors(FileInterceptor('image'))
     async addTeacher(
@@ -21,10 +21,10 @@ export class TeachersAdminController {
         return response;
     }
 
-    @UseGuards(JwtGuard)
+    @UseGuards(JwtAdminGuard)
     @Get('teacherslist')
     async getTeachersList() {
-        const teachers = await this.teachersAdminService.getTeachersList();
+        const teachers = await this.teachersAdminService.getTeachers();
         return teachers;
     }
 

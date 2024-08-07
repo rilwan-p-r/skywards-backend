@@ -19,17 +19,16 @@ export class AdminauthService {
             const payload = { adminEmail };
             const token = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY })
             console.log('generated tokennn', token);
-
+            
             res.cookie('adminJwt', token, {
                 httpOnly: true,
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: 24 * 60 * 60 * 1000,
             });
 
             return {
                 email: payload.adminEmail,
-                accessToken: token,
             };
 
         } else {
@@ -40,7 +39,7 @@ export class AdminauthService {
     async adminLogout(res: Response) {
         res.cookie('adminJwt', '', {
             httpOnly: true,
-            secure: true,
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             expires: new Date(0),
         });

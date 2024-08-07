@@ -3,7 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class JwtGuard extends AuthGuard('adminJwt') {
+export class JwtAdminGuard extends AuthGuard('adminJwt') {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
     const token = request.cookies ? request.cookies.adminJwt : null;
@@ -17,7 +17,7 @@ export class JwtGuard extends AuthGuard('adminJwt') {
     try {
         const secretKey = process.env.SECRET_KEY;
         const decoded = jwt.verify(token, secretKey) as { adminEmail: string };
-        console.log('decodeddd', decoded);
+        console.log('admin decodeddd', decoded);
         
 
       const adminEmail = process.env.ADMIN_EMAIL;

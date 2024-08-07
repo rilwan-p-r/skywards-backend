@@ -2,9 +2,10 @@ import { Logger, Module } from '@nestjs/common';
 import { AdminModule } from './admin/admin.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { TeacherController } from './teacher/teacher.controller';
-import { TeacherService } from './teacher/teacher.service';
 import { TeacherModule } from './teacher/teacher.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailService } from './email/email.service';
+import { StudentModule } from './student/student.module';
 
 
 
@@ -24,10 +25,28 @@ import { TeacherModule } from './teacher/teacher.module';
       },
       inject: [ConfigService],
     }),
+
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port:465,
+        secure:true,
+        auth: {
+          user: `${process.env.SENDER_EMAIL}`,
+          pass: `${process.env.SENDER_PASS}`,
+        },
+        tls: {
+          rejectUnauthorized: false,
+          ciphers: 'SSLv3', 
+        },
+      },
+    }),
+
     AdminModule,
     TeacherModule,
+    StudentModule,
   ],
-  controllers: [TeacherController],
-  providers: [TeacherService],
+  controllers: [],
+  providers: [EmailService],
 })
 export class AppModule { }
