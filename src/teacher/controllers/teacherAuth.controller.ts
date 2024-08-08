@@ -16,9 +16,9 @@ export class TeacherAuthController {
         return this.teacherAuthService.teacherLogin(teacherLoginDto, res);
     }
 
-    @UseGuards(JwtTeacherGuard)
+    @UseGuards(JwtTeacherGuard)                                     
     @Post('logout')
     async adminLogout(@Res({ passthrough: true }) res: Response) {
         return this.teacherAuthService.teacherLogout(res);
     }
-}
+}   

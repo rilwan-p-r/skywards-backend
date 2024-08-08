@@ -90,4 +90,40 @@ export class EmailService {
       `,
     });
   }
+
+  async sendOTP(email: string, otp: number) {
+    
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Your OTP for Skywards Academy',
+      text: `Dear User,
+
+Your One-Time Password (OTP) for Skywards Academy is: ${otp}
+
+This OTP is valid for 10 minutes. Please do not share this OTP with anyone.
+
+If you didn't request this OTP, please ignore this email.
+
+Best regards,
+The Skywards Academy Team`,
+      html: `
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+          <div style="background-color: #f0f4f8; border-radius: 10px; padding: 30px; border-top: 5px solid #4CAF50;">
+            <h1 style="color: #4CAF50; font-size: 24px; margin-bottom: 20px;">Your OTP for Skywards Academy</h1>
+            <p style="color: #333; line-height: 1.6;">Dear User,</p>
+            <p style="color: #333; line-height: 1.6;">You have requested a One-Time Password (OTP) for Skywards Academy. Please find your OTP below:</p>
+            <div style="background-color: #ffffff; border-left: 4px solid #4CAF50; padding: 15px; margin: 20px 0;">
+              <p style="margin: 0; color: #333; font-size: 24px; font-weight: bold; text-align: center;">${otp}</p>
+            </div>
+            <p style="color: #333; line-height: 1.6;">This OTP is valid for 10 minutes. Please do not share this OTP with anyone.</p>
+            <div style="background-color: #FFF3E0; border: 1px solid #FFB74D; border-radius: 5px; padding: 10px; margin-top: 20px;">
+              <p style="color: #E65100; margin: 0;"><strong>Important:</strong> If you didn't request this OTP, please ignore this email.</p>
+            </div>
+            <p style="color: #333; line-height: 1.6; margin-top: 20px;">If you have any questions, please contact our support team.</p>
+            <p style="color: #333; line-height: 1.6;">Best regards,<br>The Skywards Academy Team</p>
+          </div>
+        </div>
+      `,
+    });
+  }
 }

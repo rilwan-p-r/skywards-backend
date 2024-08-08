@@ -22,27 +22,27 @@ export class Teacher extends Document {
     imageUrl: string;
 
     @Prop({ required: true })
-    subject:string;
-    
-    @Prop({required:true})
-    address:string;
-    
-    @Prop({required:true})
-    yearsOfExperience:number;
+    subject: string;
+
+    @Prop({ required: true })
+    address: string;
+
+    @Prop({ required: true })
+    yearsOfExperience: number;
 
     @Prop({ default: true })
     verified: boolean;
-    
+
 }
 
 export const TeacherSchema = SchemaFactory.createForClass(Teacher);
 
 // hash the password
-TeacherSchema.pre('save', async function(next) {
+TeacherSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
     }
-    
+
     const saltRounds = 10;
     this.password = await bcrypt.hash(this.password, saltRounds);
     next();
