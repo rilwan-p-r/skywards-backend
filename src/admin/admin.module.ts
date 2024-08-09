@@ -16,15 +16,18 @@ import { StudentAdminService } from './services/studentAdmin.service';
 import { StudentAdminRepository } from './repositories/studentAdmin.repository';
 import { Student, StudentSchema } from '../student/schema/student.schema';
 import { EmailService } from 'src/email/email.service';
+import { RefrehToken, RefrehTokentSchema } from './schema/refreshToken.schema';
+import { AdminAuthRepository } from './repositories/AdminAuth.repository';
 dotenv.config();
 
 @Module({
-  providers: [AdminauthService, TeacherAdminRepository, TeachersAdminService, StudentAdminService, StudentAdminRepository, EmailService],
+  providers: [AdminauthService, TeacherAdminRepository, TeachersAdminService, StudentAdminService, StudentAdminRepository, EmailService, AdminAuthRepository],
   controllers: [AdminAuthController, TeachersAdminController, StudentAdminController],
   imports: [
 
     MongooseModule.forFeature([{ name: Teacher.name, schema: TeacherSchema }]),
     MongooseModule.forFeature([{ name: Student.name, schema: StudentSchema }]),
+    MongooseModule.forFeature([{ name: RefrehToken.name, schema: RefrehTokentSchema }]),
 
     AwsS3Module,
 
@@ -38,7 +41,7 @@ dotenv.config();
 
     JwtModule.register({
       secret: `${process.env.SECRET_KEY}`,
-      signOptions: { expiresIn: '1d' }
+      signOptions: { expiresIn: '1h' }
     }),
 
 

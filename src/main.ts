@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { config } from 'dotenv';
+import { ValidationPipe } from '@nestjs/common'; 
 config();
 async function bootstrap() {
   console.log('Environment Variables:', process.env);
@@ -10,6 +11,10 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const port = process.env.PORT
   console.log(`Running port number: ${port}`);
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist:true,
+    forbidNonWhitelisted:true
+  }))
   app.use(cookieParser());
   app.use(morgan('dev'));
   app.enableCors({

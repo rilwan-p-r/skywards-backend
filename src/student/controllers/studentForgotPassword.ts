@@ -1,6 +1,6 @@
 import { Body, Controller, Post, } from "@nestjs/common";
 import { ForgotPasswordDto, NewPassword, VerifyOtpDto } from "../dto/forgotPassword.dto.";
-import { StudentForgotPasswordService } from "../services/teacherForgotPassword.service";
+import { StudentForgotPasswordService } from "../services/studentForgotPassword.service";
 
 @Controller('student')
 export class StudentForgotPasswordController {

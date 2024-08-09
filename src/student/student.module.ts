@@ -5,7 +5,7 @@ import { StudentRepository } from './repositories/student.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Student, StudentSchema } from './schema/student.schema';
 import { JwtModule } from '@nestjs/jwt';
-import { StudentForgotPasswordService } from './services/teacherForgotPassword.service';
+import { StudentForgotPasswordService } from './services/studentForgotPassword.service';
 import { StudentForgotPasswordController } from './controllers/studentForgotPassword';
 import { StudentOtp, StudentOtpSchema } from './schema/studentOtp.schema';
 import { EmailService } from 'src/email/email.service';
