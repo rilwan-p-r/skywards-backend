@@ -14,7 +14,7 @@ export class JwtTeacherGuard extends AuthGuard('teachertJwt') {
     const token = request.cookies ? request.cookies.teacherJwt : null;
 
     if (!token) {
-      throw new UnauthorizedException('No token found');
+      throw new UnauthorizedException('Teacher Token Not Found');
     }
 
     try {
@@ -34,7 +34,7 @@ export class JwtTeacherGuard extends AuthGuard('teachertJwt') {
       if (error instanceof jwt.JsonWebTokenError) {
         throw new UnauthorizedException('Invalid token');
       } else if (error instanceof jwt.TokenExpiredError) {
-        throw new UnauthorizedException('Token expired');
+        throw new UnauthorizedException('Teacher Token expired');
       } else {
         throw new UnauthorizedException('Authentication failed');
       }

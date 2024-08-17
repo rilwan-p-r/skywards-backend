@@ -1,9 +1,8 @@
-import { Body, Controller, Post, Res, UseGuards,} from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, UseGuards,} from '@nestjs/common';
 import { AdminauthService } from '../services/adminAuth.service';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { JwtAdminGuard } from 'src/guards/jwtAdminAuth.guard';
 import { AdminLoginDto } from '../dto/adminLogin.dto';
-import { RefreshTokenDto } from '../dto/refreshToken.dto';
 
 @Controller('admin')
 export class AdminAuthController {
@@ -27,7 +26,8 @@ export class AdminAuthController {
     }
 
     @Post('refresh')
-    async refreshToken(@Body() refreshTokenDto:RefreshTokenDto){
-        return this.adminauthService.refreshTokens(refreshTokenDto.refreshToken)
+    async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        const refreshToken = req.cookies['adminRefreshToken'];
+        return this.adminauthService.refreshTokens(refreshToken, res);
     }
 }

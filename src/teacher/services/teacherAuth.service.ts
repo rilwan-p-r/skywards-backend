@@ -3,6 +3,7 @@ import { TeacherRepository } from '../repositories/teacher.repository';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class TeacherAuthService {
@@ -26,21 +27,15 @@ export class TeacherAuthService {
         }
 
         const payload = { 
-            sub: teacher._id,
+            // sub: teacher._id,
             email: teacher.email
         };
 
-        const token = this.jwtService.sign(payload, { 
-            secret: process.env.JWT_SECRET_KEY,
-            expiresIn: '24h'
-        });
+        const tokens = await this.generateToken(payload.email);
+        console.log('generated tokennn', tokens);
 
-        res.cookie('teacherJwt', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 24 * 60 * 60 * 1000,
-        });
+        this.setTokenCookie(res, 'teacherAccessToken', tokens.accessToken, 24 * 60 * 60 * 1000);
+        this.setTokenCookie(res, 'teacherRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
 
         return {
             id: teacher._id,
@@ -51,18 +46,63 @@ export class TeacherAuthService {
         };
     }
 
+    async refreshTokens(refreshToken: string, res: Response) {
+        const tokenRecord = await this.teacherRepository.findOne(refreshToken);
+
+        if (!tokenRecord) {
+            throw new UnauthorizedException('Invalid Teacher Refresh Token');
+        }
+
+        const tokens = await this.generateToken(tokenRecord.email);
+
+        this.setTokenCookie(res, 'teacherAccessToken', tokens.accessToken, 24 * 60 * 60 * 1000);
+        this.setTokenCookie(res, 'teacherRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
+
+        return { message: 'Teacher tokens refreshed successfully' };
+    }
+
+    async generateToken(teacherEmail: string) {
+        const payload = { teacherEmail };
+        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '10m' })
+        const refreshToken = uuidv4();
+        await this.teacherRepository.storeRefreshToken(refreshToken, teacherEmail)
+        return {
+            accessToken,
+            refreshToken
+        }
+    }
+
+    
+
+    async teacherLogout(res: Response) {
+        this.clearTokenCookie(res, 'teacherAccessToken');
+        this.clearTokenCookie(res, 'teacherRefreshToken');
+
+        return { message: 'Logged out successfully' };
+    }
+
+
+// Private functions____________________________________________________________________________________
+
     private async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
         return bcrypt.compare(plainTextPassword, hashedPassword);
     }
 
-    async teacherLogout(res: Response) {
-        res.cookie('teacherJwt', '', {
+    private setTokenCookie(res: Response, name: string, value: string, maxAge: number) {
+        res.cookie(name, value, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: maxAge,
+        });
+    }
+
+    private clearTokenCookie(res: Response, name: string) {
+        res.cookie(name, '', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             expires: new Date(0),
         });
-
-        return { message: 'Logged out successfully' };
     }
 }

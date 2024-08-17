@@ -3,17 +3,18 @@ import { StudentRepository } from '../repositories/student.repository';
 import { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class StudentAuthService {
     constructor(
         private readonly studentRepository: StudentRepository,
         private readonly jwtService: JwtService
-    ) {}
-    
+    ) { }
+
     async studentLogin(input: { email: string; password: string }, res: Response) {
         const student = await this.studentRepository.findByEmail(input.email);
-        
+
         if (!student) {
             throw new UnauthorizedException('Invalid email or password');
         }
@@ -24,45 +25,80 @@ export class StudentAuthService {
             throw new UnauthorizedException('Invalid email or password');
         }
 
-        const payload = { 
-            sub: student._id,
+        const payload = {
+            // sub: student._id,
             email: student.email
         };
 
-        const token = this.jwtService.sign(payload, { 
-            secret: process.env.JWT_SECRET_KEY
-        });
-        console.log('generated tokennn', token);
-        
+        const tokens = await this.generateToken(payload.email);
+        console.log('generated tokennn', tokens);
 
-        res.cookie('studentJwt', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
-            maxAge: 24 * 60 * 60 * 1000,
-        });
+        this.setTokenCookie(res, 'studentAccessToken', tokens.accessToken, 24 * 60 * 60 * 1000);
+        this.setTokenCookie(res, 'studentRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
 
         return {
             id: student._id,
             email: student.email,
             firstName: student.firstName,
             lastName: student.lastName,
-            imageUrl:student.imageUrl
+            imageUrl: student.imageUrl
         };
     }
+
+    async refreshTokens(refreshToken: string, res: Response) {
+        const tokenRecord = await this.studentRepository.findOne(refreshToken);
+
+        if (!tokenRecord) {
+            throw new UnauthorizedException('Invalid Student Refresh Token');
+        }
+
+        const tokens = await this.generateToken(tokenRecord.email);
+
+        this.setTokenCookie(res, 'studentAccessToken', tokens.accessToken, 24 * 60 * 60 * 1000);
+        this.setTokenCookie(res, 'studentRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
+
+        return { message: 'Student tokens refreshed successfully' };
+    }
+
+    async generateToken(studentEmail: string) {
+        const payload = { studentEmail };
+        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '10m' })
+        const refreshToken = uuidv4();
+        await this.studentRepository.storeRefreshToken(refreshToken, studentEmail)
+        return {
+            accessToken,
+            refreshToken
+        }
+    }
+
+    async studentLogout(res: Response) {
+        this.clearTokenCookie(res, 'studentAccessToken');
+        this.clearTokenCookie(res, 'studentRefreshToken');
+
+        return { message: 'Logged out successfully' };
+    }
+
+    // private functions________________________________________________________________________________
 
     private async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
         return bcrypt.compare(plainTextPassword, hashedPassword);
     }
 
-    async studentLogout(res: Response) {
-        res.cookie('studentJwt', '', {
+    private setTokenCookie(res: Response, name: string, value: string, maxAge: number) {
+        res.cookie(name, value, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: maxAge,
+        });
+    }
+
+    private clearTokenCookie(res: Response, name: string) {
+        res.cookie(name, '', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             expires: new Date(0),
         });
-
-        return { message: 'Logged out successfully' };
     }
 }

@@ -3,23 +3,20 @@ import { AuthGuard } from '@nestjs/passport';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
-export class JwtAdminGuard extends AuthGuard('adminJwt') {
+export class JwtAdminGuard extends AuthGuard('adminAccessToken') {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
-    const token = request.cookies ? request.cookies.adminJwt : null;
-    console.log('requestttt',request);
-    console.log('tokennnn',token);
-
+    const token = request.cookies ? request.cookies.adminAccessToken : null;
+    console.log('token',token);
+    
     if (!token) {
-      throw new UnauthorizedException('No token found');
+      throw new UnauthorizedException('Admin Token Not Found');
     }
 
     try {
-        const secretKey = process.env.SECRET_KEY;
-        const decoded = jwt.verify(token, secretKey) as { adminEmail: string };
-        console.log('admin decodeddd', decoded);
-        
-
+      const secretKey = process.env.SECRET_KEY;
+      const decoded = jwt.verify(token, secretKey) as { adminEmail: string };
+      
       const adminEmail = process.env.ADMIN_EMAIL;
 
       if (decoded.adminEmail !== adminEmail) {
@@ -29,13 +26,14 @@ export class JwtAdminGuard extends AuthGuard('adminJwt') {
       request.adminEmail = adminEmail;
       return true;
     } catch (error) {
-      if (error instanceof jwt.JsonWebTokenError) {
-        throw new UnauthorizedException('Invalid : ',error.message);
-      } else if (error instanceof jwt.TokenExpiredError) {
-        throw new UnauthorizedException('Token expired');
+      if (error instanceof jwt.TokenExpiredError) {
+        throw new UnauthorizedException('Admin Token expired');
+      } else if (error instanceof jwt.JsonWebTokenError) {
+        throw new UnauthorizedException('Invalid token');
       } else {
-        throw new UnauthorizedException(error.message);
+        throw new UnauthorizedException('Authentication error');
       }
     }
+    
   }
 }

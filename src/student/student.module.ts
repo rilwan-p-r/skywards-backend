@@ -10,6 +10,7 @@ import { StudentForgotPasswordController } from './controllers/studentForgotPass
 import { StudentOtp, StudentOtpSchema } from './schema/studentOtp.schema';
 import { EmailService } from 'src/email/email.service';
 import { StudentOtpRepository } from './repositories/studentOtp.repository';
+import { StudentRefreshToken, StudentRefreshTokenSchema } from './schema/studentRefreshToken.schema';
 
 @Module({
   providers: [StudentAuthService, StudentRepository, StudentForgotPasswordService, EmailService, StudentOtpRepository],
@@ -17,7 +18,7 @@ import { StudentOtpRepository } from './repositories/studentOtp.repository';
   imports: [
     MongooseModule.forFeature([{ name: Student.name, schema: StudentSchema }]),
     MongooseModule.forFeature([{ name: StudentOtp.name, schema: StudentOtpSchema }]),
-
+    MongooseModule.forFeature([{ name: StudentRefreshToken.name, schema: StudentRefreshTokenSchema }]),
     JwtModule.register({
       secret: `${process.env.SECRET_KEY}`,
       signOptions: { expiresIn: '1d' }

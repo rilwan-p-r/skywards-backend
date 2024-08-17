@@ -16,8 +16,8 @@ import { StudentAdminService } from './services/studentAdmin.service';
 import { StudentAdminRepository } from './repositories/studentAdmin.repository';
 import { Student, StudentSchema } from '../student/schema/student.schema';
 import { EmailService } from 'src/email/email.service';
-import { RefrehToken, RefrehTokentSchema } from './schema/refreshToken.schema';
 import { AdminAuthRepository } from './repositories/AdminAuth.repository';
+import { AdminRefreshToken, AdminRefreshTokenSchema } from './schema/adminRefreshToken.schema';
 dotenv.config();
 
 @Module({
@@ -27,7 +27,7 @@ dotenv.config();
 
     MongooseModule.forFeature([{ name: Teacher.name, schema: TeacherSchema }]),
     MongooseModule.forFeature([{ name: Student.name, schema: StudentSchema }]),
-    MongooseModule.forFeature([{ name: RefrehToken.name, schema: RefrehTokentSchema }]),
+    MongooseModule.forFeature([{ name: AdminRefreshToken.name, schema: AdminRefreshTokenSchema }]),
 
     AwsS3Module,
 

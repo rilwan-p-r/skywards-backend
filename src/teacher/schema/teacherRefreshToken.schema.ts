@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
-export class RefrehToken extends Document {
+export class TeacherRefreshToken extends Document {
 
     @Prop({ required: true })
     token: string;
@@ -14,4 +14,4 @@ export class RefrehToken extends Document {
     expiryDate: Date;
 }
 
-export const RefrehTokentSchema = SchemaFactory.createForClass(RefrehToken);
+export const TeacherRefreshTokenSchema = SchemaFactory.createForClass(TeacherRefreshToken);

@@ -27,12 +27,8 @@ export class AdminauthService {
 
             console.log('generated tokennn', tokens.accessToken);
 
-            res.cookie('adminJwt', tokens.accessToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
-                maxAge: 24 * 60 * 60 * 1000,
-            });
+            this.setTokenCookie(res, 'adminAccessToken', tokens.accessToken, 24 * 60 * 60 * 1000);;
+            this.setTokenCookie(res, 'adminRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
 
             return {
                 email: adminEmail,
@@ -43,20 +39,24 @@ export class AdminauthService {
         }
     }
 
-    async refreshTokens(refreshToken: string) {
+    async refreshTokens(refreshToken: string,  res: Response) {
         const tokenRecord = await this.adminAuthRepository.findOne(refreshToken);
 
         if (!tokenRecord) {
-            throw new UnauthorizedException('Invalid refresh token');
+            throw new UnauthorizedException('Invalid Admin Refresh Token');
         }
 
-        const payload = { email: tokenRecord.email };
-        return this.generateToken(payload)
-    }
+        const tokens = await this.generateToken(tokenRecord.email);
 
-    async generateToken(adminEmail) {
+        this.setTokenCookie(res, 'adminAccessToken', tokens.accessToken, 24 * 60 * 60 * 1000);;
+        this.setTokenCookie(res, 'adminRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
+
+        return { message: 'Admin tokens refreshed successfully' };
+    }   
+
+    async generateToken(adminEmail: string) {
         const payload = { adminEmail };
-        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY })
+        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '33s' })
         const refreshToken = uuidv4();
         await this.adminAuthRepository.storeRefreshToken(refreshToken, adminEmail)
         return {
@@ -66,13 +66,28 @@ export class AdminauthService {
     }
 
     async adminLogout(res: Response) {
-        res.cookie('adminJwt', '', {
+        this.clearTokenCookie(res, 'adminAccessToken');
+        this.clearTokenCookie(res, 'adminRefreshToken');
+
+        return { message: 'Logged out successfully' };
+    }
+
+
+    private setTokenCookie(res: Response, name: string, value: string, maxAge: number) {
+        res.cookie(name, value, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: maxAge,
+        });
+    }
+
+    private clearTokenCookie(res: Response, name: string) {
+        res.cookie(name, '', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             expires: new Date(0),
         });
-
-        return { message: 'Logged out successfully' };
     }
 }

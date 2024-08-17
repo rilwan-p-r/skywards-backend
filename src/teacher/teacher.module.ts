@@ -10,6 +10,7 @@ import { TeacherForgotPasswordController } from './controllers/teacherForgotPass
 import { EmailService } from 'src/email/email.service';
 import { TeacherOtpRepository } from './repositories/teacherOtp.repository';
 import { TeacherOtp, TeacherOtpSchema } from './schema/teacherOtp.schema';
+import { TeacherRefreshToken, TeacherRefreshTokenSchema } from './schema/teacherRefreshToken.schema';
 
 @Module({
   providers: [TeacherAuthService, TeacherRepository,TeacherForgotPasswordService, EmailService, TeacherOtpRepository],
@@ -17,6 +18,7 @@ import { TeacherOtp, TeacherOtpSchema } from './schema/teacherOtp.schema';
   imports:[
     MongooseModule.forFeature([{ name: Teacher.name, schema: TeacherSchema }]),
     MongooseModule.forFeature([{ name: TeacherOtp.name, schema: TeacherOtpSchema }]),
+    MongooseModule.forFeature([{ name: TeacherRefreshToken.name, schema: TeacherRefreshTokenSchema }]),
 
     JwtModule.register({
       secret: `${process.env.SECRET_KEY}`,
