@@ -12,7 +12,7 @@ export class StudentAuthService {
         private readonly jwtService: JwtService
     ) { }
 
-    async studentLogin(input: { email: string; password: string }, res: Response) {
+    async   studentLogin(input: { email: string; password: string }, res: Response) {
         const student = await this.studentRepository.findByEmail(input.email);
 
         if (!student) {
@@ -37,11 +37,12 @@ export class StudentAuthService {
         this.setTokenCookie(res, 'studentRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
 
         return {
-            id: student._id,
+            _id: student._id,
             email: student.email,
             firstName: student.firstName,
             lastName: student.lastName,
-            imageUrl: student.imageUrl
+            imageUrl: student.imageUrl,
+            batchId:student.batchId
         };
     }
 
@@ -62,7 +63,7 @@ export class StudentAuthService {
 
     async generateToken(studentEmail: string) {
         const payload = { studentEmail };
-        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '10m' })
+        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '15s' })
         const refreshToken = uuidv4();
         await this.studentRepository.storeRefreshToken(refreshToken, studentEmail)
         return {

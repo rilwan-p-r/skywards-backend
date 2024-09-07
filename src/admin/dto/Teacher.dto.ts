@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsString, IsNumber, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class TeacherDto {
@@ -18,5 +19,8 @@ export class TeacherDto {
   readonly subject: string;
 
   @IsNumber()
+  @Transform(({ value }) => (value ? Number(value) : value), { toClassOnly: true })
+  @IsNumber({}, { message: 'Years of experience must be a number' })
   readonly yearsOfExperience: number;
+
 }

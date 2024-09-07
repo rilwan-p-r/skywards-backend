@@ -38,7 +38,7 @@ export class TeacherAuthService {
         this.setTokenCookie(res, 'teacherRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
 
         return {
-            id: teacher._id,
+            _id: teacher._id,
             email: teacher.email,
             firstName: teacher.firstName,
             lastName: teacher.lastName,
@@ -63,7 +63,7 @@ export class TeacherAuthService {
 
     async generateToken(teacherEmail: string) {
         const payload = { teacherEmail };
-        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '10m' })
+        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '15s' })
         const refreshToken = uuidv4();
         await this.teacherRepository.storeRefreshToken(refreshToken, teacherEmail)
         return {

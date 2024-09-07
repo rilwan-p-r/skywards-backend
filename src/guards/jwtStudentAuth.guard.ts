@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import { StudentRepository } from 'src/student/repositories/student.repository';
 
 @Injectable()
-export class JwtStudentGuard extends AuthGuard('studentAccessToken') {
+export class  JwtStudentGuard extends AuthGuard('studentAccessToken') {
   constructor(private readonly studentRepository: StudentRepository) {
     super();
   }
@@ -22,7 +22,7 @@ export class JwtStudentGuard extends AuthGuard('studentAccessToken') {
     try {
       const secretKey = process.env.SECRET_KEY;
       const decoded = jwt.verify(token, secretKey) as { studentEmail: string };
-      console.log('decoded emailll',decoded);
+      console.log('decoded student',decoded);
       
       const student = await this.studentRepository.findByEmail(decoded?.studentEmail);
 console.log('finded student',student);
@@ -34,10 +34,10 @@ console.log('finded student',student);
       request.student = student;
       return true;
     } catch (error) {
-      if (error instanceof jwt.JsonWebTokenError) {
-        throw new UnauthorizedException('Invalid token');
-      } else if (error instanceof jwt.TokenExpiredError) {
+      if (error instanceof jwt.TokenExpiredError) {
         throw new UnauthorizedException('Student Token expired');
+      } else if (error instanceof jwt.JsonWebTokenError) {
+        throw new UnauthorizedException('Invalid Token');
       } else {
         throw new UnauthorizedException('Authentication failed');
       }

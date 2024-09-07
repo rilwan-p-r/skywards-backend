@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { AdminAuthRepository } from '../repositories/AdminAuth.repository';
+import { AdminAuthRepository } from '../repositories/adminAuth.repository';
 
 @Injectable()
 export class AdminauthService {
@@ -27,7 +27,7 @@ export class AdminauthService {
 
             console.log('generated tokennn', tokens.accessToken);
 
-            this.setTokenCookie(res, 'adminAccessToken', tokens.accessToken, 24 * 60 * 60 * 1000);;
+            this.setTokenCookie(res, 'adminAccessToken', tokens.accessToken, 24 * 60 * 60 * 1000);
             this.setTokenCookie(res, 'adminRefreshToken', tokens.refreshToken, 15 * 24 * 60 * 60 * 1000);
 
             return {
@@ -56,7 +56,7 @@ export class AdminauthService {
 
     async generateToken(adminEmail: string) {
         const payload = { adminEmail };
-        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '33s' })
+        const accessToken = this.jwtService.sign(payload, { secret: process.env.SECRET_KEY, expiresIn: '10s' })
         const refreshToken = uuidv4();
         await this.adminAuthRepository.storeRefreshToken(refreshToken, adminEmail)
         return {

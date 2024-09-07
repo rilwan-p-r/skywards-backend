@@ -13,12 +13,13 @@ async function bootstrap() {
   console.log(`Running port number: ${port}`);
   app.useGlobalPipes(new ValidationPipe({
     whitelist:true,
-    forbidNonWhitelisted:true
+    forbidNonWhitelisted:true,
+    transform: true
   }))
   app.use(cookieParser());
   app.use(morgan('dev'));
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: 'http://localhost:5000',
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,

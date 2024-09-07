@@ -5,21 +5,21 @@ import { InjectModel } from "@nestjs/mongoose";
 import * as bcrypt from 'bcrypt'
 import { newPasswordInterface } from "../interfaces/studentOtp.interface";
 import { StudentRefreshToken } from "../schema/studentRefreshToken.schema";
-
+import { Types } from 'mongoose'
 @Injectable()
 export class StudentRepository {
     constructor(
         @InjectModel(Student.name) private readonly studentModel: Model<Student>,
         @InjectModel(StudentRefreshToken.name) private readonly studentRefreshTokenModel: Model<StudentRefreshToken>
-) { }
+    ) { }
 
-    async findByEmail(email:string){
-        const student = await this.studentModel.findOne({email});
+    async findByEmail(email: string) {
+        const student = await this.studentModel.findOne({ email });
         console.log('finded', student);
         return student
     }
-    async findById(id:string){
-        return await this.studentModel.findById({id});
+    async findStudentById(studentId: Types.ObjectId) {
+        return await this.studentModel.findById( studentId );
     }
 
     async changePassword(newPassword: newPasswordInterface) {
@@ -29,7 +29,7 @@ export class StudentRepository {
                 { email: newPassword.email },
                 { $set: { password: hashedPassword } }
             );
-            console.log('updatedpass',changedStudent);
+            console.log('updatedpass', changedStudent);
             return changedStudent
         } catch (error) {
             console.log(error);
@@ -50,7 +50,7 @@ export class StudentRepository {
         const expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + 15);
         await this.studentRefreshTokenModel.updateOne(
-            {  email },
+            { email },
             { $set: { expiryDate, token } },
             { upsert: true })
     }

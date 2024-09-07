@@ -1,4 +1,7 @@
+import { Types } from 'mongoose';
+
 export interface StudentInterface {
+    // _id?: Types.ObjectId;
     firstName: string;
     lastName: string;
     dateOfBirth: Date;
@@ -12,4 +15,5 @@ export interface StudentInterface {
     imageUrl: string;
     verified: boolean;
     password: string;
+    batchId: Types.ObjectId;
 }

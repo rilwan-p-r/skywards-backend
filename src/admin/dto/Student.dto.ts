@@ -1,4 +1,9 @@
-import { IsString, IsEmail, IsNotEmpty, IsDate, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsString, IsEmail, IsNotEmpty, IsDate,} from 'class-validator';
+
+export function TransformDate() {
+  return Transform(({ value }) => value ? new Date(value) : null);
+}
 
 export class StudentDto {
   @IsString()
@@ -11,6 +16,7 @@ export class StudentDto {
 
   @IsDate()
   @IsNotEmpty()
+  @TransformDate()
   readonly dateOfBirth: Date;
 
   @IsString()
@@ -18,7 +24,6 @@ export class StudentDto {
   readonly gender: string;
 
   @IsString()
-  @IsOptional()
   readonly address: string;
 
   @IsNotEmpty()
@@ -26,18 +31,20 @@ export class StudentDto {
   readonly email: string;
 
   @IsString()
-  @IsOptional()
   readonly phoneNumber: string;
 
   @IsString()
-  @IsOptional()
   readonly emergencyContact: string;
 
   @IsString()
-  @IsOptional()
   readonly bloodGroup: string;
 
   @IsDate()
   @IsNotEmpty()
+  @TransformDate()
   readonly admissionDate: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly batchId: string;
 }

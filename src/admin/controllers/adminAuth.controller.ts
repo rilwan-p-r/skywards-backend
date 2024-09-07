@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req, Res, UseGuards,} from '@nestjs/common';
 import { AdminauthService } from '../services/adminAuth.service';
 import { Request, Response } from 'express';
 import { JwtAdminGuard } from 'src/guards/jwtAdminAuth.guard';
-import { AdminLoginDto } from '../dto/adminLogin.dto';
+import { AdminLoginDto } from '../dto/AdminLogin.dto';
 
 @Controller('admin')
 export class AdminAuthController {
