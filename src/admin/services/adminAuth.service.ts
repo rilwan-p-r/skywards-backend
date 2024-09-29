@@ -76,7 +76,7 @@ export class AdminauthService {
     private setTokenCookie(res: Response, name: string, value: string, maxAge: number) {
         res.cookie(name, value, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: process.env.NODE_ENV == 'production',
             sameSite: 'strict',
             maxAge: maxAge,
         });
@@ -85,7 +85,7 @@ export class AdminauthService {
     private clearTokenCookie(res: Response, name: string) {
         res.cookie(name, '', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: process.env.NODE_ENV == 'production',
             sameSite: 'strict',
             expires: new Date(0),
         });
