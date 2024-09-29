@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import * as morgan from 'morgan';
 import { config } from 'dotenv';
-import { ValidationPipe } from '@nestjs/common'; 
+import { ValidationPipe } from '@nestjs/common';
 config();
 async function bootstrap() {
   console.log('Environment Variables:', process.env);
@@ -12,14 +12,14 @@ async function bootstrap() {
   const port = process.env.PORT
   console.log(`Running port number: ${port}`);
   app.useGlobalPipes(new ValidationPipe({
-    whitelist:true,
-    forbidNonWhitelisted:true,
+    whitelist: true,
+    forbidNonWhitelisted: true,
     transform: true
   }))
   app.use(cookieParser());
   app.use(morgan('dev'));
   app.enableCors({
-    origin: 'https://skyward-frontend.vercel.app/',
+    origin: [process.env.FRONTEND_URL, process.env.FRONTEND_PORT],
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true,
