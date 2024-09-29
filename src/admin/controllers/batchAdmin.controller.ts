@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, UseGuards, } from '@nestjs/com
 import { JwtAdminGuard } from 'src/guards/jwtAdminAuth.guard';
 import { BatchAdminService } from '../services/batchAdmin.service';
 import { BatchDto } from '../dto/Batch.dto';
-import { EditBatchDto } from '../dto/editBatch.dto';
+import { EditBatchDto } from '../dto/EditBatchDto';
 
 
 @Controller('admin')

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, } from '@nestjs/common';
 import { BatchRepository } from '../repositories/batchRepository';
 import { Types } from 'mongoose';
 import { BatchDto } from '../dto/Batch.dto';
-import { EditBatchDto } from '../dto/editBatch.dto';
+import { EditBatchDto } from '../dto/EditBatchDto';
 
 @Injectable()
 export class BatchAdminService {
