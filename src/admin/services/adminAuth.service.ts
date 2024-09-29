@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { AdminAuthRepository } from '../repositories/adminAuth.repository';
+import { AdminAuthRepository } from '../repositories/AdminAuth.repository';
 
 @Injectable()
 export class AdminauthService {

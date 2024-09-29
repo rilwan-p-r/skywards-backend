@@ -13,7 +13,7 @@ import { StudentAdminService } from './services/studentAdmin.service';
 import { StudentAdminRepository } from './repositories/studentAdmin.repository';
 import { Student, StudentSchema } from '../student/schema/student.schema';
 import { EmailService } from 'src/email/email.service';
-import { AdminAuthRepository } from './repositories/adminAuth.repository';
+import { AdminAuthRepository } from './repositories/AdminAuth.repository';
 import { AdminRefreshToken, AdminRefreshTokenSchema } from './schema/adminRefreshToken.schema';
 import { Batch, BatchSchema } from './schema/batch.schema';
 import { BatchAdminController } from './controllers/batchAdmin.controller';
