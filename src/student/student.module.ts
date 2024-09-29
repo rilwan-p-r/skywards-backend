@@ -21,10 +21,26 @@ import { StudentLeaveController } from './controllers/studentLeave.controller';
 import { StudentLeaveService } from './services/studentLeave.service';
 import { StudentLeaveRepository } from './repositories/studentLeave.repository';
 import { LeaveApplyStudent, LeaveApplyStudentSchema } from './schema/LeaveApplyStudent.schema';
+import { MCQCompetitionStudentController } from './controllers/mcqCompetitionStudent.controller';
+import { MCQCompetitionStudentService } from './services/mcqCompetitionStudent.service';
+import { MCQCompetitionStudentRepository } from './repositories/mcqCompetitionStudent.repository';
+import { StudentMCQAttempt, StudentMCQAttemptSchema } from './schema/StudentMCQAttempt.schema';
+import { MCQCompetition, MCQCompetitionSchema } from 'src/admin/schema/mcqCompetition.schema';
+
+import { StudentAnnouncementService } from './services/studentAnnouncement.service';
+import { AnnouncementRepository } from 'src/admin/repositories/announcement.repository';
+import { Announcement, AnnouncementSchema } from 'src/admin/schema/announcement.schema';
+import { StudentAnnouncementController } from './controllers/studentAnnouncement.controller';
 
 @Module({
-  providers: [StudentAuthService, StudentRepository, StudentForgotPasswordService, EmailService, StudentOtpRepository, StudentService, AttendanceRepository, BatchRepository,  StudentLeaveService, StudentLeaveRepository],
-  controllers: [StudentAuthController, StudentForgotPasswordController, StudentController, StudentLeaveController],
+  providers: [
+    StudentAuthService, StudentRepository, StudentForgotPasswordService, EmailService,
+    StudentOtpRepository, StudentService, AttendanceRepository, BatchRepository, StudentLeaveService,
+    StudentLeaveRepository, MCQCompetitionStudentService, MCQCompetitionStudentRepository, StudentAnnouncementService,
+    AnnouncementRepository],
+  controllers: [
+    StudentAuthController, StudentForgotPasswordController, StudentController, StudentLeaveController,
+    MCQCompetitionStudentController, StudentAnnouncementController],
   imports: [
     MongooseModule.forFeature([
       { name: Student.name, schema: StudentSchema },
@@ -33,6 +49,9 @@ import { LeaveApplyStudent, LeaveApplyStudentSchema } from './schema/LeaveApplyS
       { name: Attendance.name, schema: AttendanceSchema },
       { name: Batch.name, schema: BatchSchema },
       { name: LeaveApplyStudent.name, schema: LeaveApplyStudentSchema },
+      { name: MCQCompetition.name, schema: MCQCompetitionSchema },
+      { name: StudentMCQAttempt.name, schema: StudentMCQAttemptSchema },
+      { name: Announcement.name, schema: AnnouncementSchema },
     ]),
     JwtModule.register({
       secret: `${process.env.SECRET_KEY}`,
@@ -40,4 +59,4 @@ import { LeaveApplyStudent, LeaveApplyStudentSchema } from './schema/LeaveApplyS
     }),
   ]
 })
-export class StudentModule {}
+export class StudentModule { }

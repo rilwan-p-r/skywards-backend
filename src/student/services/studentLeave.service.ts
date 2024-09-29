@@ -3,13 +3,17 @@ import { LeaveStudentDto } from "../dto/leaveStudent.dto";
 import { StudentLeaveRepository } from "../repositories/studentLeave.repository";
 
 @Injectable()
-export class StudentLeaveService{
+export class StudentLeaveService {
     constructor(
-        private readonly studentLeaveRepository:StudentLeaveRepository
-    ){
+        private readonly studentLeaveRepository: StudentLeaveRepository
+    ) {
 
     }
     async leaveApplyStudent(leaveStudentDto: LeaveStudentDto) {
         return this.studentLeaveRepository.leaveApplyStudent(leaveStudentDto);
-      }
+    }
+
+    async getMyLeaves(studentId: string, month: string) {
+        return this.studentLeaveRepository.getMyLeaves(studentId, month);
+    }
 }

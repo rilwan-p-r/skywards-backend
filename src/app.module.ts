@@ -7,6 +7,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailService } from './email/email.service';
 import { StudentModule } from './student/student.module';
 import { SocketIoGatewayModule } from './socketIoGateway/module/socketIo.module';
+import { ReviewModule } from './review/review.module';
 
 
 
@@ -47,6 +48,7 @@ import { SocketIoGatewayModule } from './socketIoGateway/module/socketIo.module'
     TeacherModule,
     StudentModule,
     SocketIoGatewayModule,
+    ReviewModule
   ],
   controllers: [],
   providers: [EmailService],

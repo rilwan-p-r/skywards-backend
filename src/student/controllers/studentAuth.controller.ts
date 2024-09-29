@@ -1,8 +1,7 @@
-import { Body, Controller, Post, Req, Res, UseGuards,  } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res, } from '@nestjs/common';
 import { StudentAuthService } from '../services/studentAuth.service';
 import { StudentLoginDto } from '../dto/StudentLogin.dto';
 import { Request, Response } from 'express';
-import { JwtStudentGuard } from 'src/guards/jwtStudentAuth.guard';
 
 @Controller('student')
 export class StudentAuthController {
@@ -17,7 +16,6 @@ export class StudentAuthController {
         return this.studentAuthService.studentLogin(studentLoginDto, res);
     }
 
-    @UseGuards(JwtStudentGuard)
     @Post('logout')
     async adminLogout(@Res({ passthrough: true }) res: Response) {
         return this.studentAuthService.studentLogout(res);

@@ -21,4 +21,16 @@ export class StudentLeaveRepository {
     });
     return newLeaveApplication.save();
   }
+
+  async getMyLeaves(studentId: string, month: string): Promise<LeaveApplyStudent[]> {
+    const [year, monthNumber] = month.split('-');
+    const startDate = new Date(parseInt(year), parseInt(monthNumber) - 1, 1);
+    const endDate = new Date(parseInt(year), parseInt(monthNumber), 0);
+
+    return this.leaveApplyStudentModel.find({
+      studentId: new Types.ObjectId(studentId),
+      startDate: { $gte: startDate, $lte: endDate }
+    }).sort({ startDate: 1 }).exec();
+  }
+  
 }

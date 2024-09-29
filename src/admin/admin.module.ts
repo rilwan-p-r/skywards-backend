@@ -3,9 +3,6 @@ import { AdminauthService } from './services/adminAuth.service';
 import { AdminAuthController } from './controllers/adminAuth.controller';
 import { TeachersAdminController } from './controllers/teachersAdmin.controller';
 import { JwtModule } from '@nestjs/jwt';
-import { AwsS3Module } from 'src/aws/awsS3.module';
-import { MulterModule } from '@nestjs/platform-express';
-import { S3Service } from '../aws/awsS3.service';
 import { TeacherAdminRepository } from './repositories/teacherAdmin.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Teacher, TeacherSchema } from '../teacher/schema/teacher.schema';
@@ -26,15 +23,28 @@ import { Course, CourseSchema } from './schema/course.scehma';
 import { CourseAdminService } from './services/courseAdmin.service';
 import { CourseAdminRepository } from './repositories/courseAdmin.repository';
 import { CourseAdminController } from './controllers/courseAdmin.controller';
+import { MCQCompetitionAdminService } from './services/mcqCompetitionAdmin.service';
+import { MCQCompetitionAdminRepository } from './repositories/mcqCompetitionAdmin.repository';
+import { MCQCompetitionAdminController } from './controllers/mcqCompetitionAdmin.controller';
+import { MCQCompetition, MCQCompetitionSchema } from './schema/mcqCompetition.schema';
+import { S3Service } from 'src/aws/awsS3.service';
+import { AdminAnnouncementController } from './controllers/adminAnnouncement.controller';
+import { AdminAnnouncementService } from './services/adminAnnouncement.service';
+import { AnnouncementRepository } from './repositories/announcement.repository';
+import { Announcement, AnnouncementSchema } from './schema/announcement.schema';
+
 dotenv.config();
 
 @Module({
   providers: [
     AdminauthService, TeacherAdminRepository, TeachersAdminService, StudentAdminService,
     StudentAdminRepository, EmailService, AdminAuthRepository, BatchAdminService,
-    BatchRepository, CourseAdminService, CourseAdminRepository],
+    BatchRepository, CourseAdminService, CourseAdminRepository, MCQCompetitionAdminService,
+    MCQCompetitionAdminRepository, S3Service, AdminAnnouncementService, AnnouncementRepository],
 
-  controllers: [AdminAuthController, TeachersAdminController, StudentAdminController, BatchAdminController, CourseAdminController],
+  controllers: [
+    AdminAuthController, TeachersAdminController, StudentAdminController,
+    BatchAdminController, CourseAdminController, MCQCompetitionAdminController, AdminAnnouncementController],
   imports: [
 
     MongooseModule.forFeature([
@@ -43,16 +53,9 @@ dotenv.config();
       { name: AdminRefreshToken.name, schema: AdminRefreshTokenSchema },
       { name: Batch.name, schema: BatchSchema },
       { name: Course.name, schema: CourseSchema },
+      { name: MCQCompetition.name, schema: MCQCompetitionSchema },
+      { name: Announcement.name, schema: AnnouncementSchema },
     ]),
-
-    AwsS3Module,
-    MulterModule.registerAsync({
-      imports: [AwsS3Module],
-      useFactory: async (s3Service: S3Service) => ({
-        storage: s3Service.createMulterStorage(),
-      }),
-      inject: [S3Service],
-    }),
 
     JwtModule.register({
       secret: `${process.env.SECRET_KEY}`,

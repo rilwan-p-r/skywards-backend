@@ -6,12 +6,12 @@ import { EditBatchDto } from '../dto/editBatch.dto';
 
 
 @Controller('admin')
+@UseGuards(JwtAdminGuard)
 export class BatchAdminController {
     constructor(
         private readonly batchAdminService: BatchAdminService,
     ) { }
 
-    @UseGuards(JwtAdminGuard)
     @Post('createBatch')
     async createBatch(
         @Body() batchDto: BatchDto,
@@ -20,14 +20,12 @@ export class BatchAdminController {
         return response;
     }
 
-    @UseGuards(JwtAdminGuard)
     @Get('getBatchList')
     async etBatches() {
         const response = await this.batchAdminService.getBatches();
         return response;
     }
 
-    @UseGuards(JwtAdminGuard)
     @Put('editBatch/:batchId')
     async editBatch(
         @Param('batchId') batchId: string,

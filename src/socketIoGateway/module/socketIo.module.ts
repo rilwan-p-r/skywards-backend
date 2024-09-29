@@ -7,6 +7,7 @@ import { Batch, BatchSchema } from 'src/admin/schema/batch.schema';
 import { BatchChat, BatchChatSchema } from 'src/socketIoGateway/schema/batchChat.schema';
 import { Teacher, TeacherSchema } from 'src/teacher/schema/teacher.schema';
 import { Student, StudentSchema } from 'src/student/schema/student.schema';
+import { S3Service } from 'src/aws/awsS3.service';
 
 @Module({
     imports: [MongooseModule.forFeature([
@@ -15,7 +16,7 @@ import { Student, StudentSchema } from 'src/student/schema/student.schema';
         { name: Teacher.name, schema: TeacherSchema },
         { name: Student.name, schema: StudentSchema },
     ])],
-    providers: [SocketIoGateway, BatchChatRepository, BatchRepository],
+    providers: [SocketIoGateway, BatchChatRepository, BatchRepository, S3Service],
     exports: [SocketIoGateway]
 })
 export class SocketIoGatewayModule { }

@@ -15,8 +15,7 @@ export class StudentAdminService {
         private readonly emailService: EmailService,
     ) { }
 
-    async addStudent(studentDto: StudentDto, file: Express.Multer.File): Promise<StudentInterface> {
-        const imageUrl = (file as any).location;
+    async addStudent(studentDto: StudentDto, imageUrl?: string): Promise<StudentInterface> {
         const existingStudent = await this.studentAdminRepository.findByEmail(studentDto.email);
 
         if (existingStudent) {
@@ -24,7 +23,6 @@ export class StudentAdminService {
         }
 
         const randomPassword = generatePassword(8);
-        console.log('passs', randomPassword);
 
         const newStudent: StudentInterface = {
             ...studentDto,
@@ -36,7 +34,6 @@ export class StudentAdminService {
 
         await this.emailService.sendStudentCredentials(studentDto.email, randomPassword);
         const createdStudent = await this.studentAdminRepository.createStudent(newStudent);
-        console.log('createdStudent', createdStudent);
 
         return createdStudent;
     }
@@ -63,7 +60,7 @@ export class StudentAdminService {
         }
     }
 
-    async editStudent(studentId: string, editStudentDto: EditStudentDto, file?: Express.Multer.File) {
+    async editStudent(studentId: string, editStudentDto: EditStudentDto, newImageUrl?: string) {
         try {
             const objectId = new Types.ObjectId(studentId);
 
@@ -72,16 +69,9 @@ export class StudentAdminService {
                 throw new NotFoundException('Student not found');
             }
 
-            let imageUrl = existingStudent.imageUrl;
-            if (file) {
-                console.log('fileeee', file);
-
-                imageUrl = (file as any).location;
-            }
-
             const updatedValues = {
                 ...editStudentDto,
-                imageUrl,
+                imageUrl: newImageUrl || existingStudent.imageUrl,
                 batchId: new Types.ObjectId(editStudentDto.batchId)
             };
             const updatedStudent = await this.studentAdminRepository.updateStudent(objectId, updatedValues);

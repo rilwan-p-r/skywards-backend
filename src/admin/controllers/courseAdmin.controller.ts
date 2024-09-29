@@ -3,6 +3,7 @@ import { JwtAdminGuard } from "src/guards/jwtAdminAuth.guard";
 import { CourseDto } from "../dto/Course.dto";
 import { CourseAdminService } from "../services/courseAdmin.service";
 @Controller('admin')
+@UseGuards(JwtAdminGuard)
 export class CourseAdminController{
     constructor(
         private readonly courseAdminService:CourseAdminService,
@@ -10,7 +11,6 @@ export class CourseAdminController{
 
     }
 
-    @UseGuards(JwtAdminGuard)
     @Post('createCourse')
     async createCourse(@Body() courseDto:CourseDto ){
         console.log('courseDto',courseDto);
@@ -19,7 +19,6 @@ export class CourseAdminController{
         return response;
     }
 
-    @UseGuards(JwtAdminGuard)
     @Get('getCourseList')
     async etBatches(){
         const response = await this.courseAdminService.getCourses();

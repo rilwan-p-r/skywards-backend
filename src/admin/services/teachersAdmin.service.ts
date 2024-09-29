@@ -14,9 +14,8 @@ export class TeachersAdminService {
         private readonly emailService: EmailService
     ) { }
 
-    async addTeacher(teacherDto: TeacherDto, file: Express.Multer.File): Promise<TeacherInterface> {
-        const imageUrl = (file as any).location
-        
+    async addTeacher(teacherDto: TeacherDto, imageUrl: string): Promise<TeacherInterface> {
+
         const existingTeacher = await this.teacherAdminRepository.findByEmail(teacherDto.email);
 
         if (existingTeacher) {
@@ -52,29 +51,29 @@ export class TeachersAdminService {
         }
     }
 
-    async editTeacher(teacherID: string, editTeacherDto: EditTeacherDto, file: Express.Multer.File) {
+    async editTeacher(teacherId: string, editTeacherDto: EditTeacherDto, newImageUrl?: string) {
         try {
-            const objectId = new Types.ObjectId(teacherID)
-            const existingTeacher = await this.teacherAdminRepository.findByTeacherId(objectId)
+            const objectId = new Types.ObjectId(teacherId);
+            const existingTeacher = await this.teacherAdminRepository.findByTeacherId(objectId);
+
             if (!existingTeacher) {
-                throw new NotFoundException('Teacher not founded')
+                throw new NotFoundException('Teacher not found');
             }
-            let imageUrl = existingTeacher.imageUrl
-            if (file) {
-                imageUrl = (file as any).location
-            }
+
             const updatedValues = {
                 ...editTeacherDto,
-                imageUrl,
-            }
-            const updatedTeacher = await this.teacherAdminRepository.updateTeacher(objectId, updatedValues)
+                imageUrl: newImageUrl || existingTeacher.imageUrl,
+            };
+
+            const updatedTeacher = await this.teacherAdminRepository.updateTeacher(objectId, updatedValues);
+
             return {
                 message: 'Teacher updated successfully',
                 updatedTeacher
             };
         } catch (error) {
-            console.log(error);
-            throw new Error;
+            console.error('Error updating teacher:', error);
+            throw new Error('Failed to update teacher');
         }
     }
 

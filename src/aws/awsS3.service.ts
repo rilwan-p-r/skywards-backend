@@ -1,8 +1,6 @@
-// s3.service.ts
 import { Injectable } from '@nestjs/common';
-import { S3Client } from '@aws-sdk/client-s3';
-import * as multerS3 from 'multer-s3';
-
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class S3Service {
@@ -18,19 +16,24 @@ export class S3Service {
     });
   }
 
-  createMulterStorage() {
-    return multerS3({
-      s3: this.s3Client,
-      bucket: process.env.AWS_S3_BUCKET,
-      acl: 'public-read',
-      metadata: (req, file, cb) => {
-        cb(null, { fieldName: file.fieldname });
-      },
-      key: (req, file, cb) => {
-        console.log("i'm file",file);
-        
-        cb(null, `${Date.now().toString()}-${file.originalname}`);
-      },
+  async uploadFile(file: Express.Multer.File): Promise<string> {
+    const bucket = process.env.AWS_S3_BUCKET;
+    const key = `${uuidv4()}-${file.originalname}`;
+
+    const command = new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+      ACL: 'public-read',
     });
+
+    try {
+      await this.s3Client.send(command);
+      return `https://${bucket}.s3.amazonaws.com/${key}`;
+    } catch (error) {
+      console.error('Error uploading file to S3:', error);
+      throw new Error('Failed to upload file to S3');
+    }
   }
 }
