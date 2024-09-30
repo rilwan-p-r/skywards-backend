@@ -92,7 +92,7 @@ export class TeacherAuthService {
         res.cookie(name, value, {
             httpOnly: true,
             secure: process.env.NODE_ENV == 'production',
-            sameSite: 'strict',
+            sameSite: 'none',
             maxAge: maxAge,
         });
     }
@@ -101,7 +101,7 @@ export class TeacherAuthService {
         res.cookie(name, '', {
             httpOnly: true,
             secure: process.env.NODE_ENV == 'production',
-            sameSite: 'strict',
+            sameSite: 'none',
             expires: new Date(0),
         });
     }
