@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors, } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors, } from '@nestjs/common';
 import { JwtAdminGuard } from 'src/guards/jwtAdminAuth.guard';
 import { StudentDto } from '../dto/Student.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -29,10 +29,18 @@ export class StudentAdminController {
     }
 
     @Get('studentslist')
-    async getStudentsList() {
-        const students = await this.studentAdminService.getStudents();
-        return students;
+    async getStudentsList(
+        @Query('page') page: number = 1, 
+        @Query('limit') limit: number = 10,
+        @Query('search') search: string = '') {
+      const result = await this.studentAdminService.getStudents(page, limit, search);
+      return result;
     }
+    @Get('studentCount')
+    async getStudentCount(){
+    const result = await this.studentAdminService.getStudentsCount()
+    return result;
+}
 
     @Get('getStudentsByBatchId/:batchId')
     async getStudentsByBatchId(@Param('batchId') batchId: string) {

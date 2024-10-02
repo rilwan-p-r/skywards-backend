@@ -38,11 +38,19 @@ export class StudentAdminService {
         return createdStudent;
     }
 
-    async getStudents(): Promise<StudentInterface[]> {
+    async getStudentsCount(){
+        try{
+            const count = await this.studentAdminRepository.getStudentsCount()
+            return count
+        }catch(error){
+            throw new Error
+        }
+    }
+
+    async getStudents(page: number = 1, limit: number = 10, search: string = ''): Promise<any> {
         try {
-            const students = await this.studentAdminRepository.findStudents();
-            console.log(students);
-            return students;
+            const result = await this.studentAdminRepository.findStudents(page, limit, search);
+            return result;
         } catch (error) {
             throw new Error(`Failed to fetch students: ${error.message}`);
         }
