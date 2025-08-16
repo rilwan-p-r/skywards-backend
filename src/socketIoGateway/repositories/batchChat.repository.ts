@@ -5,7 +5,7 @@ import { BatchChat } from '../schema/batchChat.schema';
 
 @Injectable()
 export class BatchChatRepository {
-  constructor(@InjectModel(BatchChat.name) private batchChatModel: Model<BatchChat>) {}
+  constructor(@InjectModel(BatchChat.name) private batchChatModel: Model<BatchChat>) { }
 
   async createMessage(
     text: string,
@@ -15,14 +15,14 @@ export class BatchChatRepository {
     fileUrls: string[] = [],
   ): Promise<BatchChat> {
     console.log('Creating message:', { text, batchId, senderId, senderType, fileUrls });
-  
+
     const messageData = {
       text: text || '',
       batchId: new Types.ObjectId(batchId),
       [senderType === 'teacher' ? 'teacherId' : 'studentId']: new Types.ObjectId(senderId),
       fileUrls,
     };
-  
+
     const message = new this.batchChatModel(messageData);
     return message.save();
   }
@@ -40,7 +40,7 @@ export class BatchChatRepository {
   async populateMessage(message: BatchChat): Promise<BatchChat> {
     return (await message
       .populate('studentId', 'firstName lastName imageUrl'))
-    .populate('teacherId', 'firstName lastName imageUrl')
+      .populate('teacherId', 'firstName lastName imageUrl')
   }
 
   async deleteUserMessages(messageIds: string[], userId: string, role: 'student' | 'teacher'): Promise<string[]> {
